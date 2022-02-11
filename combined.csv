@@ -1,8 +1,5 @@
-"ID","Name","Address","PhoneNum","Occupation","Gender","testCol1","testCol2"
-"1111","John Smith","123   Apple Street","555-1234",,,,
-"3333","Mary Phil",,,"Doctor","Female",,
-"4444","Jane Doe",,,"Teacher","Female",,
-"5555","Jane Doe","456 Orange Street","555-5678",,,,
-"6666","Jerry Springfield",,,"Pilot","Male",,
-"7777",,,,,,"row1","row1"
-"8888",,,,,,"row2","row2"
+"ID","Name","Address","PhoneNum","Occupation","Gender"
+"1111","John Smith","123   Apple Street","555-1234",,
+"3333","Mary Phil",,,"Doctor","Female"
+"5555","Jane Doe","456 Orange Street","555-5678",,
+"6666","Jerry Springfield",,,"Pilot","Male"

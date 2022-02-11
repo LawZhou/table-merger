@@ -1,10 +1,18 @@
+import Processor.CSVProcessor;
+import Processor.FileProcessor;
+import Processor.HTMLProcessor;
+import Record.RecordTable;
+
 import java.io.IOException;
 
 public class RecordMerger {
 
 	public static final String FILENAME_COMBINED = "combined.csv";
 
-
+	/**
+	 * Read a single file
+	 * @return result RecordTable
+	 */
 	private RecordTable readFile(String filePath) throws IOException {
 		RecordTable res = null;
 		if (filePath.contains(".html")) {
@@ -16,7 +24,7 @@ public class RecordMerger {
 			processor.parseFile();
 			res = processor.processRecord();
 		} else {
-//			Add support to other formats here
+			//Add support to other formats here
 			System.err.println("File format is unsupported yet");
 			System.exit(1);
 		}
@@ -46,6 +54,5 @@ public class RecordMerger {
 		// Sort IDs in ascending order
 		res.sort();
 		res.writeTable(FILENAME_COMBINED);
-		System.out.println("finish");
 	}
 }
