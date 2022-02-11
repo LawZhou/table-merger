@@ -15,7 +15,7 @@ public class RecordRow implements Comparable<RecordRow>{
     }
 
     /**
-     * Clone a row
+     * Clone the RecordRow
      */
     public RecordRow(RecordRow row) {
         this.id = row.getId();

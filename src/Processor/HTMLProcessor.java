@@ -46,7 +46,7 @@ public class HTMLProcessor implements FileProcessor {
     public RecordTable processRecord() {
         List<String> headers = getHeaders();
         RecordTable table = new RecordTable(headers);
-        //Retrieve id position
+        //Retrieve id column position
         int idIdx = headers.indexOf(Constants.ID_COL.toString());
 
         Elements rowElmts = doc.getElementById(Constants.HTML_TABLE_ID.toString()).children().first().children();

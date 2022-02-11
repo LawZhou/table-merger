@@ -44,7 +44,6 @@ public class RecordTable {
 
     /**
      * Add a RecordRow to the table. Skip and issue a warning if the id is invalid or the table already contains the id.
-     * @param row
      */
     public void addRow(RecordRow row) {
         String rowId = row.getId();

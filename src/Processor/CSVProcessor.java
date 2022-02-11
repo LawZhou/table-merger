@@ -21,6 +21,10 @@ public class CSVProcessor implements FileProcessor {
         this.filePath = filePath;
     }
 
+    /**
+     *
+     * @return the headers in the CSV
+     */
     private List<String> getHeaders() {
         return parser.getHeaderNames();
     }
