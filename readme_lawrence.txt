@@ -8,6 +8,7 @@ Java version:java 11.0.14 2022-01-18 LTS
              Java(TM) SE Runtime Environment 18.9 (build 11.0.14+8-LTS-263)
              Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.14+8-LTS-263, mixed mode)
 
+Assumption: the table in html file always has id "directory".
 
 Design decision: In the case that the second file has the row with the same ID with the table in first file (e.g. 5555)
 I choose not to merge the row from second file and issue a warning.

@@ -9,6 +9,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,8 @@ public class CSVProcessor implements FileProcessor {
      * @return the headers in the CSV
      */
     private List<String> getHeaders() {
-        return parser.getHeaderNames();
+        //Avoid fix size list
+        return new ArrayList<>(parser.getHeaderNames());
     }
 
     /**

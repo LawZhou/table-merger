@@ -23,7 +23,8 @@ public class UnitTests {
     static final String TEST_SECOND = "./data/second.csv";
     static final String TEST_FIRST = "./data/first.html";
     static final String TEST_SECOND_UNIQUE_ID = "./data/test_second_no_duplicate.csv";
-    static final String TEST_SIMPLE = "./data/simple_csv.csv";
+    static final String Test_SIMPLE_CSV = "./data/simple_csv.csv";
+    static final String Test_SIMPLE_HTML = "./data/simple_html.html";
 
 
     @Test
@@ -67,6 +68,10 @@ public class UnitTests {
         assertEquals(actualRes, expectedTable);
     }
 
+    /**
+     * Test: The csv has a row with empty ID.
+     * Expected: the row is not added to the table
+     */
     @Test
     public void testCSVProcessRecordInvalidId() throws IOException {
         FileProcessor csvProc = new CSVProcessor(TEST_CSV_PATH_INVALID_ID);
@@ -128,6 +133,9 @@ public class UnitTests {
         assertEquals(actualRes, expectedTable);
     }
 
+    /**
+     * Test: first.html.
+     */
     @Test
     public void testHTMLProcessRecord2() throws IOException {
         FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
@@ -153,6 +161,10 @@ public class UnitTests {
         assertEquals(actualRes, expectedTable);
     }
 
+    /**
+     * Test: The html has a row with empty ID.
+     * Expected: the row is not added to the table
+     */
     @Test
     public void testHTMLProcessRecordInvalidId() throws IOException {
         FileProcessor htmlProc = new HTMLProcessor(TEST_HTML_PATH_INVALID_ID);
@@ -223,6 +235,66 @@ public class UnitTests {
         assertEquals(htmlTable, expectedTable);
     }
 
+    /**
+     * Test: merge html file to csv file
+     * @throws IOException
+     */
+    @Test
+    public void testMerge2() throws IOException {
+        FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
+        htmlProc.parseFile();
+        FileProcessor csvProc = new CSVProcessor(TEST_SECOND);
+        csvProc.parseFile();
+        RecordTable htmlTable = htmlProc.processRecord();
+        RecordTable csvTable = csvProc.processRecord();
+
+        csvTable.merge(htmlTable);
+
+
+        List<String> expectedHeaders = new ArrayList<>(
+                Arrays.asList("Occupation", "Name", "Gender", Constants.ID_COL.toString(), "Address", "PhoneNum"));
+        Map<String, String> row1Map = new HashMap<>();
+        row1Map.put("Name", "Jerry Springfield");
+        row1Map.put("Address", null);
+        row1Map.put("PhoneNum", null);
+        row1Map.put("Occupation", "Pilot");
+        row1Map.put("Gender", "Male");
+        RecordRow row1 = new RecordRow("6666", row1Map);
+
+        Map<String, String> row2Map = new HashMap<>();
+        row2Map.put("Name", "Jane Doe");
+        row2Map.put("Address", null);
+        row2Map.put("PhoneNum", null);
+        row2Map.put("Occupation", "Teacher");
+        row2Map.put("Gender", "Female");
+        RecordRow row2 = new RecordRow("5555", row2Map);
+
+        Map<String, String> row3Map = new HashMap<>();
+        row3Map.put("Name", "Mary Phil");
+        row3Map.put("Address", null);
+        row3Map.put("PhoneNum", null);
+        row3Map.put("Occupation", "Doctor");
+        row3Map.put("Gender", "Female");
+        RecordRow row3 = new RecordRow("3333", row3Map);
+
+        Map<String, String> row4Map = new HashMap<>();
+        row4Map.put("Name", "John Smith");
+        row4Map.put("Address", "123   Apple Street");
+        row4Map.put("PhoneNum", "555-1234");
+        row4Map.put("Occupation", null);
+        row4Map.put("Gender", null);
+        RecordRow row4 = new RecordRow("1111", row4Map);
+
+
+        RecordTable expectedTable = new RecordTable(expectedHeaders,
+                new ArrayList<>(Arrays.asList(row1, row2, row3, row4)));
+        assertEquals(csvTable, expectedTable);
+    }
+
+
+    /**
+     * Test: The two tables don't have duplicate IDs
+     */
     @Test
     public void testMergeUniqueId() throws IOException {
         FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
@@ -281,13 +353,16 @@ public class UnitTests {
         assertEquals(htmlTable, expectedTable);
     }
 
+    /**
+     * Test: multiple file merges (html, csv, csv)
+     */
     @Test
     public void tesMultiMerges() throws IOException {
         FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
         htmlProc.parseFile();
         FileProcessor csvProc = new CSVProcessor(TEST_SECOND_UNIQUE_ID);
         csvProc.parseFile();
-        FileProcessor csvProc2 = new CSVProcessor(TEST_SIMPLE);
+        FileProcessor csvProc2 = new CSVProcessor(Test_SIMPLE_CSV);
         csvProc2.parseFile();
         RecordTable htmlTable = htmlProc.processRecord();
         RecordTable csvTable = csvProc.processRecord();
@@ -378,13 +453,208 @@ public class UnitTests {
         assertEquals(htmlTable, expectedTable);
     }
 
+    /**
+     * Test: multiple file merges (csv, html, csv)
+     */
     @Test
-    public void tesSort() throws IOException {
+    public void tesMultiMerges2() throws IOException {
         FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
         htmlProc.parseFile();
         FileProcessor csvProc = new CSVProcessor(TEST_SECOND_UNIQUE_ID);
         csvProc.parseFile();
-        FileProcessor csvProc2 = new CSVProcessor(TEST_SIMPLE);
+        FileProcessor csvProc2 = new CSVProcessor(Test_SIMPLE_CSV);
+        csvProc2.parseFile();
+        RecordTable htmlTable = htmlProc.processRecord();
+        RecordTable csvTable = csvProc.processRecord();
+        RecordTable csvTable2 = csvProc2.processRecord();
+
+        csvTable.merge(htmlTable);
+        csvTable.merge(csvTable2);
+
+
+        List<String> expectedHeaders = new ArrayList<>(
+                Arrays.asList(
+                        "Occupation", "Name",
+                        "Gender", Constants.ID_COL.toString(),
+                        "Address", "PhoneNum",
+                        "testCol1", "testCol2"
+
+                ));
+        Map<String, String> row1Map = new HashMap<>();
+        row1Map.put("Name", "Jerry Springfield");
+        row1Map.put("Address", null);
+        row1Map.put("PhoneNum", null);
+        row1Map.put("Occupation", "Pilot");
+        row1Map.put("Gender", "Male");
+        row1Map.put("testCol1", null);
+        row1Map.put("testCol2", null);
+        RecordRow row1 = new RecordRow("6666", row1Map);
+
+        Map<String, String> row2Map = new HashMap<>();
+        row2Map.put("Name", "Jane Doe");
+        row2Map.put("Address", null);
+        row2Map.put("PhoneNum", null);
+        row2Map.put("Occupation", "Teacher");
+        row2Map.put("Gender", "Female");
+        row2Map.put("testCol1", null);
+        row2Map.put("testCol2", null);
+        RecordRow row2 = new RecordRow("4444", row2Map);
+
+        Map<String, String> row3Map = new HashMap<>();
+        row3Map.put("Name", "Mary Phil");
+        row3Map.put("Address", null);
+        row3Map.put("PhoneNum", null);
+        row3Map.put("Occupation", "Doctor");
+        row3Map.put("Gender", "Female");
+        row3Map.put("testCol1", null);
+        row3Map.put("testCol2", null);
+        RecordRow row3 = new RecordRow("3333", row3Map);
+
+        Map<String, String> row4Map = new HashMap<>();
+        row4Map.put("Name", "John Smith");
+        row4Map.put("Address", "123   Apple Street");
+        row4Map.put("PhoneNum", "555-1234");
+        row4Map.put("Occupation", null);
+        row4Map.put("Gender", null);
+        row4Map.put("testCol1", null);
+        row4Map.put("testCol2", null);
+        RecordRow row4 = new RecordRow("1111", row4Map);
+
+        Map<String, String> row5Map = new HashMap<>();
+        row5Map.put("Name", "Jane Doe");
+        row5Map.put("Address", "456 Orange Street");
+        row5Map.put("PhoneNum", "555-5678");
+        row5Map.put("Occupation", null);
+        row5Map.put("Gender", null);
+        row5Map.put("testCol1", null);
+        row5Map.put("testCol2", null);
+        RecordRow row5 = new RecordRow("5555", row5Map);
+
+        Map<String, String> row6Map = new HashMap<>();
+        row6Map.put("Name", null);
+        row6Map.put("Address", null);
+        row6Map.put("PhoneNum", null);
+        row6Map.put("Occupation", null);
+        row6Map.put("Gender", null);
+        row6Map.put("testCol1", "row1");
+        row6Map.put("testCol2", "row1");
+        RecordRow row6 = new RecordRow("7777", row6Map);
+
+        Map<String, String> row7Map = new HashMap<>();
+        row7Map.put("Name", null);
+        row7Map.put("Address", null);
+        row7Map.put("PhoneNum", null);
+        row7Map.put("Occupation", null);
+        row7Map.put("Gender", null);
+        row7Map.put("testCol1", "row2");
+        row7Map.put("testCol2", "row2");
+        RecordRow row7 = new RecordRow("8888", row7Map);
+        RecordTable expectedTable = new RecordTable(expectedHeaders,
+                new ArrayList<>(Arrays.asList(row1, row2, row3, row4, row5, row6, row7)));
+        assertEquals(csvTable, expectedTable);
+    }
+
+    /**
+     * Test: multiple file merges (csv, html, html)
+     */
+    @Test
+    public void tesMultiMerges3() throws IOException {
+        FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
+        htmlProc.parseFile();
+        FileProcessor csvProc = new CSVProcessor(TEST_SECOND);
+        csvProc.parseFile();
+        FileProcessor htmlProc2 = new CSVProcessor(Test_SIMPLE_CSV);
+        htmlProc2.parseFile();
+        RecordTable htmlTable = htmlProc.processRecord();
+        RecordTable csvTable = csvProc.processRecord();
+        RecordTable htmlTable2 = htmlProc2.processRecord();
+
+        csvTable.merge(htmlTable);
+        csvTable.merge(htmlTable2);
+
+
+        List<String> expectedHeaders = new ArrayList<>(
+                Arrays.asList(
+                        "Occupation", "Name",
+                        "Gender", Constants.ID_COL.toString(),
+                        "Address", "PhoneNum",
+                        "testCol1", "testCol2"
+
+                ));
+        Map<String, String> row1Map = new HashMap<>();
+        row1Map.put("Name", "Jerry Springfield");
+        row1Map.put("Address", null);
+        row1Map.put("PhoneNum", null);
+        row1Map.put("Occupation", "Pilot");
+        row1Map.put("Gender", "Male");
+        row1Map.put("testCol1", null);
+        row1Map.put("testCol2", null);
+        RecordRow row1 = new RecordRow("6666", row1Map);
+
+        Map<String, String> row2Map = new HashMap<>();
+        row2Map.put("Name", "Jane Doe");
+        row2Map.put("Address", null);
+        row2Map.put("PhoneNum", null);
+        row2Map.put("Occupation", "Teacher");
+        row2Map.put("Gender", "Female");
+        row2Map.put("testCol1", null);
+        row2Map.put("testCol2", null);
+        RecordRow row2 = new RecordRow("5555", row2Map);
+
+        Map<String, String> row3Map = new HashMap<>();
+        row3Map.put("Name", "Mary Phil");
+        row3Map.put("Address", null);
+        row3Map.put("PhoneNum", null);
+        row3Map.put("Occupation", "Doctor");
+        row3Map.put("Gender", "Female");
+        row3Map.put("testCol1", null);
+        row3Map.put("testCol2", null);
+        RecordRow row3 = new RecordRow("3333", row3Map);
+
+        Map<String, String> row4Map = new HashMap<>();
+        row4Map.put("Name", "John Smith");
+        row4Map.put("Address", "123   Apple Street");
+        row4Map.put("PhoneNum", "555-1234");
+        row4Map.put("Occupation", null);
+        row4Map.put("Gender", null);
+        row4Map.put("testCol1", null);
+        row4Map.put("testCol2", null);
+        RecordRow row4 = new RecordRow("1111", row4Map);
+
+        Map<String, String> row5Map = new HashMap<>();
+        row5Map.put("Name", null);
+        row5Map.put("Address", null);
+        row5Map.put("PhoneNum", null);
+        row5Map.put("Occupation", null);
+        row5Map.put("Gender", null);
+        row5Map.put("testCol1", "row1");
+        row5Map.put("testCol2", "row1");
+        RecordRow row5 = new RecordRow("7777", row5Map);
+
+        Map<String, String> row6Map = new HashMap<>();
+        row6Map.put("Name", null);
+        row6Map.put("Address", null);
+        row6Map.put("PhoneNum", null);
+        row6Map.put("Occupation", null);
+        row6Map.put("Gender", null);
+        row6Map.put("testCol1", "row2");
+        row6Map.put("testCol2", "row2");
+        RecordRow row6 = new RecordRow("8888", row6Map);
+        RecordTable expectedTable = new RecordTable(expectedHeaders,
+                new ArrayList<>(Arrays.asList(row1, row2, row3, row4, row5, row6)));
+        assertEquals(csvTable, expectedTable);
+    }
+
+    /**
+     * Test: sort rows in IDs' ascending order
+     */
+    @Test
+    public void testSort() throws IOException {
+        FileProcessor htmlProc = new HTMLProcessor(TEST_FIRST);
+        htmlProc.parseFile();
+        FileProcessor csvProc = new CSVProcessor(TEST_SECOND_UNIQUE_ID);
+        csvProc.parseFile();
+        FileProcessor csvProc2 = new CSVProcessor(Test_SIMPLE_CSV);
         csvProc2.parseFile();
         RecordTable htmlTable = htmlProc.processRecord();
         RecordTable csvTable = csvProc.processRecord();
