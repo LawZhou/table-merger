@@ -24,13 +24,16 @@ public class HTMLProcessor implements FileProcessor {
         this.filePath = filename;
     }
 
+    private Elements getRowElements() {
+        Element directory = this.doc.getElementById(Constants.HTML_TABLE_ID.toString());
+        return directory.getElementsByTag(Constants.ROW_TAG.toString());
+    }
     /**
      *
      * @return headers in the table
      */
     private List<String> getHeaders() {
-        Element directory = this.doc.getElementById(Constants.HTML_TABLE_ID.toString());
-        Elements headerElmts = directory.children().first().children().first().children();
+        Elements headerElmts = getRowElements().first().getElementsByTag(Constants.HEADER_TAG.toString());
         List<String> headers = new ArrayList<>();
         for (Element headerElmt: headerElmts) {
             headers.add(headerElmt.text());
@@ -49,7 +52,7 @@ public class HTMLProcessor implements FileProcessor {
         //Retrieve id column position
         int idIdx = headers.indexOf(Constants.ID_COL.toString());
 
-        Elements rowElmts = doc.getElementById(Constants.HTML_TABLE_ID.toString()).children().first().children();
+        Elements rowElmts = getRowElements();
 
         for (int i = 1; i < rowElmts.size(); i++) {
             Elements headerElmts = rowElmts.get(i).children();

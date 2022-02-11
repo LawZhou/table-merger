@@ -563,7 +563,7 @@ public class UnitTests {
         htmlProc.parseFile();
         FileProcessor csvProc = new CSVProcessor(TEST_SECOND);
         csvProc.parseFile();
-        FileProcessor htmlProc2 = new CSVProcessor(Test_SIMPLE_CSV);
+        FileProcessor htmlProc2 = new HTMLProcessor(Test_SIMPLE_HTML);
         htmlProc2.parseFile();
         RecordTable htmlTable = htmlProc.processRecord();
         RecordTable csvTable = csvProc.processRecord();
